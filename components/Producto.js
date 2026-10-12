@@ -3,23 +3,26 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const Producto = (props) => {
+  // Soporta tanto si recibe 'producto' como objeto o props sueltas
+  const item = props.producto || props;
+
   return (
     <View style={styles.tarjeta}>
-      <View style={[styles.contenedorImagen, { backgroundColor: props.color }]}>
-        <Image source={{ uri: props.imagen }} style={styles.imagen} />
+      <View style={[styles.contenedorImagen, { backgroundColor: item.color }]}>
+        <Image source={{ uri: item.imagen }} style={styles.imagen} />
       </View>
 
       <View style={styles.informacion}>
         <View style={styles.filaPrecio}>
-          <Text style={styles.precio}>$ {props.precio}</Text>
+          <Text style={styles.precio}>$ {item.precio}</Text>
           <TouchableOpacity>
             <Ionicons name="heart-outline" size={20} color="#BFC2D9" />
           </TouchableOpacity>
         </View>
         <Text style={styles.nombre} numberOfLines={1}>
-          {props.nombre}
+          {item.nombre}
         </Text>
-        <Text style={styles.tiempo}>{props.tiempo}</Text>
+        <Text style={styles.tiempo}>{item.tiempo}</Text>
       </View>
     </View>
   );

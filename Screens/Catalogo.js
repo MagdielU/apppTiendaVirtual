@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TextInput, FlatList, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -43,28 +43,28 @@ const Catalogo = () => {
   };
 
   const obtenerProductosPorCategoria = async (categoriaId) => {
-  try {
-    const consulta = query(
-      collection(db, "Productos"),
-      where("categoriaid", "==", Number(categoriaId)) // Usamos 'categoriaid' en minúsculas
-    );
-    const consultaSnapshot = await getDocs(consulta);
-    const datos = [];
-    consultaSnapshot.forEach((doc) => {
-      datos.push({ id: doc.id, ...doc.data() });
-    });
-    setProductos(datos);
-  } catch (error) {
-    console.error("Error obteniendo productos por categoría:", error);
-  }
-};
+    try {
+      const consulta = query(
+        collection(db, "Productos"),
+        where("categoriaid", "==", Number(categoriaId))
+      );
+      const consultaSnapshot = await getDocs(consulta);
+      const datos = [];
+      consultaSnapshot.forEach((documento) => {
+        datos.push({ id: documento.id, ...documento.data() });
+      });
+      setProductos(datos);
+    } catch (error) {
+      console.error("Error obteniendo productos por categoría:", error);
+    }
+  };
 
   const productosFiltrados = productos.filter((producto) =>
-    producto.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    producto.nombre && producto.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   const listaCategoriasConTodos = [
-    { id: "todos", nombre: "Todos", icono: "grid-outline" },
+    { id: "todos", Nombre: "Todos", icono: "grid-outline" },
     ...categorias,
   ];
 
@@ -96,7 +96,7 @@ const Catalogo = () => {
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <Categoria
-                  nombre={item.nombre}
+                  Nombre={item.Nombre || item.nombre}
                   icono={item.icono}
                   onPress={() => {
                     if (item.id === "todos") {
