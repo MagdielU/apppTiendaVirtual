@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
@@ -8,7 +8,6 @@ import { useFocusEffect } from "@react-navigation/native";
 export default function AdminProductosScreen({ navigation }) {
   const [productos, setProductos] = useState([]);
 
-  // Recarga los productos automáticamente cada vez que la pantalla entra en foco
   useFocusEffect(
     React.useCallback(() => {
       obtenerProductos();
@@ -46,7 +45,7 @@ export default function AdminProductosScreen({ navigation }) {
   const eliminarProducto = async (idDocumento) => {
     try {
       await deleteDoc(doc(db, "Productos", idDocumento));
-      obtenerProductos(); // Actualiza la lista
+      obtenerProductos();
     } catch (error) {
       console.error("Error al eliminar el producto:", error);
     }

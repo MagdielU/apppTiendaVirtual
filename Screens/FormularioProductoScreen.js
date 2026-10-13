@@ -4,7 +4,6 @@ import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 export default function FormularioProductoScreen({ route, navigation }) {
-  // Comprobamos si nos pasaron un producto para editar
   const productoEditar = route.params?.producto || null;
 
   const [id, setId] = useState(productoEditar ? String(productoEditar.id || "") : "");
@@ -20,9 +19,7 @@ export default function FormularioProductoScreen({ route, navigation }) {
   const guardarProducto = async () => {
     try {
       if (productoEditar) {
-        // ACTUALIZAR PRODUCTO EXISTENTE
-        const productoRef = doc(db, "Productos", productoEditar.id);
-        await updateDoc(productoRef, {
+        await updateDoc(doc(db, "Productos", productoEditar.id), {
           id: Number(id),
           categoriaid: Number(categoriaId),
           nombre: nombre,
@@ -32,7 +29,6 @@ export default function FormularioProductoScreen({ route, navigation }) {
           tiempo: tiempo,
         });
       } else {
-        // CREAR NUEVO PRODUCTO
         await addDoc(collection(db, "Productos"), {
           id: Number(id),
           categoriaid: Number(categoriaId),
