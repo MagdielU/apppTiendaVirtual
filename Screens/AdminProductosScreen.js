@@ -19,7 +19,8 @@ export default function AdminProductosScreen({ navigation }) {
       const querySnapshot = await getDocs(collection(db, "Productos"));
       const datos = [];
       querySnapshot.forEach((docSnap) => {
-        datos.push({ id: docSnap.id, ...docSnap.data() });
+        // Guardamos el id real del documento de Firestore como un campo seguro
+        datos.push({ docId: docSnap.id, ...docSnap.data() });
       });
       setProductos(datos);
     } catch (error) {
@@ -64,7 +65,8 @@ export default function AdminProductosScreen({ navigation }) {
 
       <FlatList
         data={productos}
-        keyExtractor={(item) => item.id.toString()}
+        // Usamos docId para garantizar una clave única y evitar conflictos con NaN
+        keyExtractor={(item, index) => item.docId ? item.docId.toString() : index.toString()}
         renderItem={({ item }) => (
           <View style={styles.tarjeta}>
             <View style={styles.infoContainer}>
@@ -73,7 +75,7 @@ export default function AdminProductosScreen({ navigation }) {
               <Text style={styles.detalles}>Color: {item.color}</Text>
               <Text style={styles.detalles}>ID categoría: {item.categoriaid}</Text>
               <Text style={styles.detalles} numberOfLines={1}>
-                ID documento: {item.id}
+                ID documento: {item.docId}
               </Text>
               <Text style={styles.tiempo}>{item.tiempo}</Text>
             </View>
@@ -90,7 +92,7 @@ export default function AdminProductosScreen({ navigation }) {
 
               <TouchableOpacity
                 style={styles.iconoAccion}
-                onPress={() => confirmarEliminar(item.id, item.nombre)}
+                onPress={() => confirmarEliminar(item.docId, item.nombre)}
               >
                 <Ionicons name="trash" size={20} color="#E07A5F" />
               </TouchableOpacity>

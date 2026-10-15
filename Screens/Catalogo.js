@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, FlatList, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -20,8 +20,8 @@ const Catalogo = () => {
     try {
       const querySnapshot = await getDocs(collection(db, "Categorias"));
       const datos = [];
-      querySnapshot.forEach((doc) => {
-        datos.push({ id: doc.id, ...doc.data() });
+      querySnapshot.forEach((docSnap) => {
+        datos.push({ docId: docSnap.id, ...docSnap.data() });
       });
       setCategorias(datos);
     } catch (error) {
@@ -33,8 +33,8 @@ const Catalogo = () => {
     try {
       const querySnapshot = await getDocs(collection(db, "Productos"));
       const datos = [];
-      querySnapshot.forEach((doc) => {
-        datos.push({ id: doc.id, ...doc.data() });
+      querySnapshot.forEach((docSnap) => {
+        datos.push({ docId: docSnap.id, ...docSnap.data() });
       });
       setProductos(datos);
     } catch (error) {
@@ -50,8 +50,8 @@ const Catalogo = () => {
       );
       const consultaSnapshot = await getDocs(consulta);
       const datos = [];
-      consultaSnapshot.forEach((documento) => {
-        datos.push({ id: documento.id, ...documento.data() });
+      consultaSnapshot.forEach((docSnap) => {
+        datos.push({ docId: docSnap.id, ...docSnap.data() });
       });
       setProductos(datos);
     } catch (error) {
@@ -64,7 +64,7 @@ const Catalogo = () => {
   );
 
   const listaCategoriasConTodos = [
-    { id: "todos", Nombre: "Todos", icono: "grid-outline" },
+    { docId: "todos", Nombre: "Todos", icono: "grid-outline" },
     ...categorias,
   ];
 
@@ -72,7 +72,8 @@ const Catalogo = () => {
     <View style={styles.container}>
       <FlatList
         data={productosFiltrados}
-        keyExtractor={(item) => item.id.toString()}
+        // Usamos docId para evitar el choque con el NaN de Firestore
+        keyExtractor={(item, index) => item.docId ? item.docId.toString() : index.toString()}
         numColumns={2}
         renderItem={({ item }) => <Producto producto={item} />}
         ListHeaderComponent={
@@ -92,17 +93,17 @@ const Catalogo = () => {
             <FlatList
               horizontal
               data={listaCategoriasConTodos}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item, index) => item.docId ? item.docId.toString() : index.toString()}
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <Categoria
                   Nombre={item.Nombre || item.nombre}
                   icono={item.icono}
                   onPress={() => {
-                    if (item.id === "todos") {
+                    if (item.docId === "todos") {
                       obtenerProductos();
                     } else {
-                      obtenerProductosPorCategoria(item.id);
+                      obtenerProductosPorCategoria(item.docId);
                     }
                   }}
                 />
